@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              https://biegalski-llc.com/
- * @since             1.0.0
+ * @since             0.0.1
  * @package           Wordpress_Purl_Platform
  *
  * @wordpress-plugin
  * Plugin Name:       WordPress PURL Platform
  * Plugin URI:        https://biegalski-llc.com/plugins/wordpress-purl-platform/
  * Description:       Launch and easily manage Personalized URL (PURL) Campaigns. Marketers can seamlessly monitor their campaigns and gather data for analysis.
- * Version:           1.0.0
+ * Version:           0.0.1
  * Author:            Michael Biegalski
  * Author URI:        https://biegalski-llc.com/
  * License:           GPL-2.0+
@@ -64,7 +64,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-wordpress-purl-platform.ph
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    1.0.0
+ * @since    0.0.1
  */
 function run_wordpress_purl_platform() {
 

@@ -7,7 +7,7 @@
  * so that it is ready for translation.
  *
  * @link       https://biegalski-llc.com/
- * @since      1.0.0
+ * @since      0.0.1
  *
  * @package    Wordpress_Purl_Platform
  * @subpackage Wordpress_Purl_Platform/includes
@@ -19,7 +19,7 @@
  * Loads and defines the internationalization files for this plugin
  * so that it is ready for translation.
  *
- * @since      1.0.0
+ * @since      0.0.1
  * @package    Wordpress_Purl_Platform
  * @subpackage Wordpress_Purl_Platform/includes
  * @author     Michael <michael@biegalski-llc.com>
@@ -30,7 +30,7 @@ class Wordpress_Purl_Platform_i18n {
 	/**
 	 * Load the plugin text domain for translation.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 */
 	public function load_plugin_textdomain() {
 
