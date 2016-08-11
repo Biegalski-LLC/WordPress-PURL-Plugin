@@ -81,7 +81,7 @@ class Wordpress_Purl_Platform_Public {
 	/**
 	 * Register the JavaScript for the public-facing side of the site.
 	 *
-	 * @since    0.0.1
+	 * @since    0.0.3
 	 */
 	public function enqueue_scripts() {
 
