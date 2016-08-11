@@ -104,7 +104,7 @@ class Wordpress_Purl_Platform_Admin {
     /**
      * Register the administration menu for this plugin into the WordPress Dashboard menu.
      *
-     * @since    0.0.2
+     * @since    0.0.3
      */
 
     public function add_plugin_admin_menu() {
@@ -143,7 +143,7 @@ class Wordpress_Purl_Platform_Admin {
     /**
      * Render the all clients page for this plugin.
      *
-     * @since    0.0.2
+     * @since    0.0.3
      */
     public function display_plugin_all_users_page() {
         include_once( 'partials/wordpress-purl-platform-admin-display-all-users.php' );
@@ -152,7 +152,7 @@ class Wordpress_Purl_Platform_Admin {
     /**
      * Render the visited clients page for this plugin.
      *
-     * @since    0.0.2
+     * @since    0.0.3
      */
     public function display_plugin_visited_users_page() {
         include_once( 'partials/wordpress-purl-platform-admin-display-visited-users.php' );
@@ -161,7 +161,7 @@ class Wordpress_Purl_Platform_Admin {
     /**
      * Render the non-visited clients page for this plugin.
      *
-     * @since    0.0.2
+     * @since    0.0.3
      */
     public function display_plugin_non_visited_users_page() {
         include_once( 'partials/wordpress-purl-platform-admin-display-inactive-users.php' );
@@ -170,7 +170,7 @@ class Wordpress_Purl_Platform_Admin {
     /**
      * Render the non-visited clients page for this plugin.
      *
-     * @since    0.0.2
+     * @since    0.0.3
      */
     public function display_plugin_shortcodes_page() {
         include_once( 'partials/wordpress-purl-platform-admin-display-shortcodes.php' );

@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              https://biegalski-llc.com/
- * @since             0.0.2
+ * @since             0.0.3
  * @package           Wordpress_Purl_Platform
  *
  * @wordpress-plugin
  * Plugin Name:       WordPress PURL Platform
  * Plugin URI:        https://biegalski-llc.com/plugins/wordpress-purl-platform/
  * Description:       Launch and easily manage Personalized URL (PURL) Campaigns. Marketers can seamlessly monitor their campaigns and gather data for analysis.
- * Version:           0.0.2
+ * Version:           0.0.3
  * Author:            Michael Biegalski
  * Author URI:        https://biegalski-llc.com/
  * License:           GPL-2.0+
