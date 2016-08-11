@@ -104,11 +104,15 @@ class Wordpress_Purl_Platform_Admin {
     /**
      * Register the administration menu for this plugin into the WordPress Dashboard menu.
      *
-     * @since    0.0.1
+     * @since    0.0.2
      */
 
     public function add_plugin_admin_menu() {
-        add_menu_page( 'WordPress PURL Platform', 'PURL', 'manage_options', $this->plugin_name, array($this, 'display_plugin_setup_page'), 'dashicons-groups' );
+        add_menu_page( 'WordPress PURL Platform', 'PURL Platform', 'manage_options', $this->plugin_name, array($this, 'display_plugin_setup_page'), 'dashicons-groups' );
+        add_submenu_page( 'wordpress-purl-platform', 'All PURL Clients', 'All PURL Clients', 'manage_options', 'wordpress-purl-platform-all', array($this, 'display_plugin_all_users_page'));
+        add_submenu_page( 'wordpress-purl-platform', 'PURL Clients That Visited', 'Active Clients', 'manage_options', 'wordpress-purl-platform-active', array($this, 'display_plugin_visited_users_page'));
+        add_submenu_page( 'wordpress-purl-platform', 'PURL Clients That Haven\'t Visited', 'Inactive Clients', 'manage_options', 'wordpress-purl-platform-inactive', array($this, 'display_plugin_non_visited_users_page'));
+        add_submenu_page( 'wordpress-purl-platform', 'PURL Shortcodes', 'PURL Shortcodes', 'manage_options', 'wordpress-purl-platform-shortcodes', array($this, 'display_plugin_shortcodes_page'));
     }
 
     /**
@@ -136,6 +140,42 @@ class Wordpress_Purl_Platform_Admin {
     }
 
     /**
+     * Render the all clients page for this plugin.
+     *
+     * @since    0.0.2
+     */
+    public function display_plugin_all_users_page() {
+        include_once( 'partials/wordpress-purl-platform-admin-display-all-users.php' );
+    }
+
+    /**
+     * Render the visited clients page for this plugin.
+     *
+     * @since    0.0.2
+     */
+    public function display_plugin_visited_users_page() {
+        include_once( 'partials/wordpress-purl-platform-admin-display-visited-users.php' );
+    }
+
+    /**
+     * Render the non-visited clients page for this plugin.
+     *
+     * @since    0.0.2
+     */
+    public function display_plugin_non_visited_users_page() {
+        include_once( 'partials/wordpress-purl-platform-admin-display-inactive-users.php' );
+    }
+
+    /**
+     * Render the non-visited clients page for this plugin.
+     *
+     * @since    0.0.2
+     */
+    public function display_plugin_shortcodes_page() {
+        include_once( 'partials/wordpress-purl-platform-admin-display-shortcodes.php' );
+    }
+
+    /**
      * @param $input
      * @return array
      */
@@ -153,8 +193,6 @@ class Wordpress_Purl_Platform_Admin {
 
             if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
 
-                $dataTypes = array('BOOLEAN', 'DATE', 'DECIMAL', 'FLOAT', 'LONGTEXT', 'MEDIUMTEXT', 'TIMESTAMP');
-
                 $x = 1;
                 $tableSchema = array();
                 while ($x < 14){
@@ -164,8 +202,6 @@ class Wordpress_Purl_Platform_Admin {
                     $x++;
                 }
 
-
-                //table not in database. Create new table
                 $charset_collate = $wpdb->get_charset_collate();
 
                 $sql = "CREATE TABLE $table_name (
@@ -190,8 +226,8 @@ class Wordpress_Purl_Platform_Admin {
             }
         }
 
-        //Cleanup
         $valid['purl-table-name'] = (isset($purlTableName) && !empty($purlTableName)) ? $purlTableName : '';
+
         $y = 1;
         while ($y < 14){
             $valid[$tableSchema['field'.$y]] = (isset($tableSchema['field'.$y]) && !empty($tableSchema['field'.$y])) ? $tableSchema['field'.$y] : '';

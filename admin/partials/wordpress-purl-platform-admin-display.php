@@ -6,7 +6,7 @@
  * This file is used to markup the admin-facing aspects of the plugin.
  *
  * @link       https://biegalski-llc.com/
- * @since      0.0.1
+ * @since      0.0.2
  *
  * @package    Wordpress_Purl_Platform
  * @subpackage Wordpress_Purl_Platform/admin/partials
@@ -32,16 +32,16 @@
 
     <h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 
-    <form method="post" name="purlType" action="options.php">
-        <?php
-        if ( function_exists('wp_nonce_field') ):
-            wp_nonce_field('purlType_' . $this->plugin_name);
-        endif;
-        ?>
-
         <?php settings_fields($this->plugin_name); ?>
 
         <?php if($importCSVId === ''): ?>
+
+        <form method="post" name="purlType" action="options.php">
+            <?php
+            if ( function_exists('wp_nonce_field') ):
+                wp_nonce_field('purlType_' . $this->plugin_name);
+            endif;
+            ?>
             <h2 class="nav-tab-wrapper" style="margin-top:20px;"><?php _e('PURL Table Configuration', $this->plugin_name);?></h2>
 
             <p><?php _e('Build the table that will retain your PURL data. Recommended fields are auto-populated, feel free to modify these at your leisure. A more dynamic table building approach will be developed and implemented in future version releases.<br />For the time being, please contact <a href="mailto:mbiegalski@alliancefranchisebrands.com">Michael Biegalski</a> if you need additional fields.', $this->plugin_name);?></p>
@@ -356,7 +356,7 @@
 
     </form>
 
-        <?php else: ?>
+    <?php else: ?>
 
         <?php
         $tableName = $wpdb->prefix . $importCSVId;
@@ -372,122 +372,15 @@
 
         <h2 class="nav-tab-wrapper"><?php _e('Data Import', $this->plugin_name);?></h2>
 
-        <p><?php _e('Due to varying hosting environments, massive data import sizes, timeouts and failures - you will have to manually insert SQL data. <br />To circumvent time/money being wasted - just use our <a href="http://tools.mrcfury.com/csv-to-sql" target="_blank">CSV-To-SQL</a> MRC Tool. Import data coming in version 2.0 maybe....', $this->plugin_name);?></p>
+        <p><?php _e('Due to varying hosting environments, typically massive data import sizes, timeouts and failures - for the moment, you will have to manually insert SQL data. <br /><br />To circumvent time/money being wasted - just use our <a href="http://tools.mrcfury.com/csv-to-sql" target="_blank">CSV-To-SQL</a> MRC Tool.<br />Import your data into table: <code>'.$tableName.'</code><br /><br />Import data directly from WordPress coming in future releases.', $this->plugin_name);?></p>
 
         <?php else: ?>
-            <?php
-                $allResults= $wpdb->get_results("SELECT * from $tableName");
-                $visitedResults = $wpdb->get_results("SELECT * from $tableName WHERE visited = '1'");
-                $nonVisitedResults = $wpdb->get_results("SELECT * from $tableName WHERE visited = '0'");
-            ?>
-                <ul class="nav nav-pills">
-                    <li class="active"><a data-toggle="pill" href="#home">All PURL Users</a></li>
-                    <li><a data-toggle="pill" href="#menu1">Visited Users</a></li>
-                    <li><a data-toggle="pill" href="#menu2">Non-Visited Users</a></li>
-                    <li><a data-toggle="pill" href="#menu3">Shortcodes</a></li>
-                </ul>
 
-                <div class="tab-content">
-                    <div id="home" class="tab-pane fade in active">
-                        <h3>All PURL Users</h3>
-                        <p>The table below represents all users in your PURL campaign - whether they visited the PURL landing page or not.</p>
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <?php $x = 1;
-                                while($x < 11): ?>
-                                    <th><?php echo $columns[$x]; ?></th>
-                                    <?php $x++; endwhile; ?>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <?php foreach ($allResults as $user){
-                                    $y = 1;
-                                    while($y < 11){
-                                        echo '<td>'.$user->$columns[$y].'</td>';
-                                        $y++;
-                                    }
-                                }?>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="menu1" class="tab-pane fade">
-                        <h3>Visited Users</h3>
-                        <p>The table below represents all users who have visited their Personalized URL [PURL] landing page.</p>
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <?php $x = 1;
-                                while($x < 11): ?>
-                                    <th><?php echo $columns[$x]; ?></th>
-                                    <?php $x++; endwhile; ?>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <?php foreach ($visitedResults as $user){
-                                    $y = 1;
-                                    while($y < 11){
-                                        echo '<td>'.$user->$columns[$y].'</td>';
-                                        $y++;
-                                    }
-                                }?>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="menu2" class="tab-pane fade">
-                        <h3>Non-Visited Users</h3>
-                        <p>The table below represents all users who have <em>not</em> visited their Personalized URL [PURL] landing page yet.</p>
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <?php $x = 1;
-                                while($x < 11): ?>
-                                    <th><?php echo $columns[$x]; ?></th>
-                                    <?php $x++; endwhile; ?>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <?php foreach ($nonVisitedResults as $user){
-                                    $y = 1;
-                                    while($y < 11){
-                                        echo '<td>'.$user->$columns[$y].'</td>';
-                                        $y++;
-                                    }
-                                }?>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="menu3" class="container tab-pane fade">
-                        <h3>Shortcodes</h3>
-                        <p>Utilize the following shortcodes for your Personalized URL landing page.</p>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Table Column</th>
-                                    <th>Shortcode</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php $x = 1;
-                            while($x < 11): ?>
-                            <tr>
-                                <td><?php echo $columns[$x]; ?></td>
-                                <td>[purl <?php echo $columns[$x]; ?>]</td>
-                            </tr>
-                            <?php $x++; endwhile; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <h2 class="nav-tab-wrapper" style="margin-top:20px;"><?php _e('Statistics', $this->plugin_name);?></h2>
+
 
         <?php endif; ?>
 
-        <?php endif; ?>
+    <?php endif; ?>
 
 </div>
