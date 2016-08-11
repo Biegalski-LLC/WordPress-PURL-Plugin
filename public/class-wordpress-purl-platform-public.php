@@ -122,7 +122,7 @@ class Wordpress_Purl_Platform_Public {
                     $table,
                     array(
                         'visited' => '1',
-                        'updated_at' => now()
+                        'updated_at' => date('Y-m-d h:i:s')
                     ),
                     array( 'slug' => $purl ),
                     array(
