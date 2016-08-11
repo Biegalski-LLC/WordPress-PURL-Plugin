@@ -109,6 +109,7 @@ class Wordpress_Purl_Platform_Admin {
 
     public function add_plugin_admin_menu() {
         add_menu_page( 'WordPress PURL Platform', 'PURL Platform', 'manage_options', $this->plugin_name, array($this, 'display_plugin_setup_page'), 'dashicons-groups' );
+        add_submenu_page( 'wordpress-purl-platform', 'PURL Settings', 'PURL Settings', 'manage_options', 'wordpress-purl-platform', array($this, 'display_plugin_setup_page'));
         add_submenu_page( 'wordpress-purl-platform', 'All PURL Clients', 'All PURL Clients', 'manage_options', 'wordpress-purl-platform-all', array($this, 'display_plugin_all_users_page'));
         add_submenu_page( 'wordpress-purl-platform', 'PURL Clients That Visited', 'Active Clients', 'manage_options', 'wordpress-purl-platform-active', array($this, 'display_plugin_visited_users_page'));
         add_submenu_page( 'wordpress-purl-platform', 'PURL Clients That Haven\'t Visited', 'Inactive Clients', 'manage_options', 'wordpress-purl-platform-inactive', array($this, 'display_plugin_non_visited_users_page'));
@@ -178,13 +179,14 @@ class Wordpress_Purl_Platform_Admin {
     /**
      * @param $input
      * @return array
+     *
+     * @since    0.0.3
      */
     public function validate($input) {
         global $wpdb;
 
         $purlTableName = sanitize_text_field( $input['purl-table-name'] );
 
-        // All checkboxes inputs
         $valid = array();
 
         if($purlTableName !== ''){
@@ -193,13 +195,9 @@ class Wordpress_Purl_Platform_Admin {
 
             if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
 
-                $x = 1;
                 $tableSchema = array();
-                while ($x < 14){
-                    $tableSchema['field'.$x] = sanitize_text_field( $input['field-'.$x] );
-                    $tableSchema['field'.$x.'-type'] = sanitize_text_field( $input['field-'.$x.'-type'] );
-                    $tableSchema['field'.$x.'-size'] = sanitize_text_field( $input['field-'.$x.'-size'] );
-                    $x++;
+                foreach ($input as $column => $value) {
+                    $tableSchema[$column] = sanitize_text_field($value);
                 }
 
                 $charset_collate = $wpdb->get_charset_collate();
@@ -207,17 +205,20 @@ class Wordpress_Purl_Platform_Admin {
                 $sql = "CREATE TABLE $table_name (
                               id mediumint(9) NOT NULL AUTO_INCREMENT,";
                     $i = 1;
-                    while ($i < 14){
-                            $sql .= $tableSchema['field' . $i] . ' ' . $tableSchema['field' . $i . '-type'];
-                            if(!empty($tableSchema['field' . $i . '-size'])){
-                                $sql .= '(' . $tableSchema['field' . $i . '-size'] . '), ';
+                    foreach ($tableSchema as $column => $value){
+                        if($tableSchema['field-' . $i]){
+                            $sql .= $tableSchema['field-' . $i] . ' ' . $tableSchema['field-' . $i . '-type'];
+                            if(!empty($tableSchema['field-' . $i . '-size'])){
+                                $sql .= '(' . $tableSchema['field-' . $i . '-size'] . '), ';
                             }else{
                                 $sql .= ', ';
                             }
-
+                        }
                         $i++;
                     }
-                $sql .= "
+                $sql .= "       visited mediumint(9) DEFAULT 0,
+                                created_at timestamp,
+                                updated_at timestamp,
                               UNIQUE KEY id (id)
                          ) $charset_collate;";
 
@@ -227,14 +228,6 @@ class Wordpress_Purl_Platform_Admin {
         }
 
         $valid['purl-table-name'] = (isset($purlTableName) && !empty($purlTableName)) ? $purlTableName : '';
-
-        $y = 1;
-        while ($y < 14){
-            $valid[$tableSchema['field'.$y]] = (isset($tableSchema['field'.$y]) && !empty($tableSchema['field'.$y])) ? $tableSchema['field'.$y] : '';
-            $valid[$tableSchema['field'.$y.'-type']] = (isset($tableSchema['field'.$y.'-type']) && !empty($tableSchema['field'.$y.'-type'])) ? $tableSchema['field'.$y.'-type'] : '';
-            $valid[$tableSchema['field'.$y.'-size']] = (isset($tableSchema['field'.$y.'-size']) && !empty($tableSchema['field'.$y.'-size'])) ? $tableSchema['field'.$y.'-size'] : '';
-            $y++;
-        }
 
         return $valid;
     }

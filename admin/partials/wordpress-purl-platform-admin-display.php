@@ -30,11 +30,9 @@
 
 <div class="wrap">
 
-    <h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
-
-        <?php settings_fields($this->plugin_name); ?>
-
         <?php if($importCSVId === ''): ?>
+
+        <h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 
         <form method="post" name="purlType" action="options.php">
             <?php
@@ -42,18 +40,34 @@
                 wp_nonce_field('purlType_' . $this->plugin_name);
             endif;
             ?>
+
+            <?php settings_fields($this->plugin_name); ?>
+
             <h2 class="nav-tab-wrapper" style="margin-top:20px;"><?php _e('PURL Table Configuration', $this->plugin_name);?></h2>
 
-            <p><?php _e('Build the table that will retain your PURL data. Recommended fields are auto-populated, feel free to modify these at your leisure. A more dynamic table building approach will be developed and implemented in future version releases.<br />For the time being, please contact <a href="mailto:mbiegalski@alliancefranchisebrands.com">Michael Biegalski</a> if you need additional fields.', $this->plugin_name);?></p>
+            <p><?php _e('Build the table schema that will retain your PURL data. Recommended fields are auto-populated, feel free to modify these at your leisure.  A more dynamic table building approach will be developed and implemented in future version releases.<br />For the time being, please contact <a href="mailto:mbiegalski@alliancefranchisebrands.com">Michael Biegalski</a> if you need additional fields.', $this->plugin_name);?></p>
 
-            <fieldset>
+            <fieldset style="margin-top:20px;">
+                <legend><?php esc_attr_e('Required Schema', $this->plugin_name);?></span></legend>
+                <label for="<?php echo $this->plugin_name;?>-field_11">
+                    <p><?php _e('The following columns and data types are required and are included in the setup of your PURL campaign schema. You do not need to define them.', $this->plugin_name);?></p>
+                    <ul>
+                        <li><?php _e('id mediumint(9) NOT NULL AUTO_INCREMENT', $this->plugin_name);?></li>
+                        <li><?php _e('visited mediumint(9)', $this->plugin_name);?></li>
+                        <li><?php _e('created_at timestamp', $this->plugin_name);?></li>
+                        <li><?php _e('updated_at timestamp', $this->plugin_name);?></li>
+                    </ul>
+                </label>
+            </fieldset>
+
+            <fieldset style="margin-top:30px;">
                 <legend><span><?php esc_attr_e('PURL Table Name:', $this->plugin_name);?></span></legend>
                 <label for="<?php echo $this->plugin_name;?>-purl_table_name">
                     <input type="text" name="<?php echo $this->plugin_name; ?>[purl-table-name]" value="purlCampaign">
                 </label>
             </fieldset>
 
-            <fieldset style="margin-top:10px;">
+            <fieldset style="margin-top:30px;">
                 <legend><span><?php esc_attr_e('Field 1:', $this->plugin_name);?></span></legend>
                 <label for="<?php echo $this->plugin_name;?>-field_1">
                     <input type="text" name="<?php echo $this->plugin_name; ?>[field-1]" value="slug"> &nbsp;
@@ -283,75 +297,6 @@
                 </label>
             </fieldset>
 
-            <fieldset style="margin-top:10px;">
-                <legend><span><?php esc_attr_e('Field 11:', $this->plugin_name);?></span></legend>
-                <label for="<?php echo $this->plugin_name;?>-field_11">
-                    <input type="text" name="<?php echo $this->plugin_name; ?>[field-11]" value="visited"> &nbsp;
-                    <select name="<?php echo $this->plugin_name; ?>[field-11-type]">
-                        <option value="MEDIUMINT">MEDIUMINT</option>
-                        <option value="BOOLEAN">BOOLEAN</option>
-                        <option value="DATE">DATE</option>
-                        <option value="DECIMAL">DECIMAL</option>
-                        <option value="FLOAT">FLOAT</option>
-                        <option value="INT">INT</option>
-                        <option value="LONGTEXT">LONGTEXT</option>
-                        <option value="MEDIUMTEXT">MEDIUMTEXT</option>
-                        <option value="SMALLINT">SMALLINT</option>
-                        <option value="TEXT">TEXT</option>
-                        <option value="TINYINT">TINYINT</option>
-                        <option value="TIMESTAMP">TIMESTAMP</option>
-                        <option value="VARCHAR">VARCHAR</option>
-                    </select> &nbsp;
-                    <input type="text" name="<?php echo $this->plugin_name; ?>[field-11-size]" value="9"> &nbsp; (Default = 0; Visited = 1;)
-                </label>
-            </fieldset>
-
-            <fieldset style="margin-top:10px;">
-                <legend><span><?php esc_attr_e('Field 12:', $this->plugin_name);?></span></legend>
-                <label for="<?php echo $this->plugin_name;?>-field_12">
-                    <input type="text" name="<?php echo $this->plugin_name; ?>[field-12]" value="created_at"> &nbsp;
-                    <select name="<?php echo $this->plugin_name; ?>[field-12-type]">
-                        <option value="TIMESTAMP">TIMESTAMP</option>
-                        <option value="BOOLEAN">BOOLEAN</option>
-                        <option value="DATE">DATE</option>
-                        <option value="DECIMAL">DECIMAL</option>
-                        <option value="FLOAT">FLOAT</option>
-                        <option value="INT">INT</option>
-                        <option value="LONGTEXT">LONGTEXT</option>
-                        <option value="MEDIUMINT">MEDIUMINT</option>
-                        <option value="MEDIUMTEXT">MEDIUMTEXT</option>
-                        <option value="SMALLINT">SMALLINT</option>
-                        <option value="TEXT">TEXT</option>
-                        <option value="TINYINT">TINYINT</option>
-                        <option value="VARCHAR">VARCHAR</option>
-                    </select> &nbsp;
-                    <input type="text" name="<?php echo $this->plugin_name; ?>[field-12-size]" value="">
-                </label>
-            </fieldset>
-
-            <fieldset style="margin-top:10px;">
-                <legend><span><?php esc_attr_e('Field 13:', $this->plugin_name);?></span></legend>
-                <label for="<?php echo $this->plugin_name;?>-field_13">
-                    <input type="text" name="<?php echo $this->plugin_name; ?>[field-13]" value="updated_at"> &nbsp;
-                    <select name="<?php echo $this->plugin_name; ?>[field-13-type]">
-                        <option value="TIMESTAMP">TIMESTAMP</option>
-                        <option value="BOOLEAN">BOOLEAN</option>
-                        <option value="DATE">DATE</option>
-                        <option value="DECIMAL">DECIMAL</option>
-                        <option value="FLOAT">FLOAT</option>
-                        <option value="INT">INT</option>
-                        <option value="LONGTEXT">LONGTEXT</option>
-                        <option value="MEDIUMINT">MEDIUMINT</option>
-                        <option value="MEDIUMTEXT">MEDIUMTEXT</option>
-                        <option value="SMALLINT">SMALLINT</option>
-                        <option value="TEXT">TEXT</option>
-                        <option value="TINYINT">TINYINT</option>
-                        <option value="VARCHAR">VARCHAR</option>
-                    </select> &nbsp;
-                    <input type="text" name="<?php echo $this->plugin_name; ?>[field-13-size]" value="">
-                </label>
-            </fieldset>
-
         <?php submit_button(__('Save PURL Config', $this->plugin_name), 'primary','submit', TRUE); ?>
 
     </form>
@@ -376,7 +321,33 @@
 
         <?php else: ?>
 
-            <h2 class="nav-tab-wrapper" style="margin-top:20px;"><?php _e('Statistics', $this->plugin_name);?></h2>
+
+            <h2 class="nav-tab-wrapper" style="margin-top:20px;"><?php _e('PURL Table Configuration', $this->plugin_name);?></h2>
+            <div class="col-xs-12 col-md-2 text-center">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th class="text-center"><code><?php echo $tableName; ?></code></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($columns as $column): ?>
+                        <tr>
+                            <td><?php echo $column; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-12 col-md-2 text-center">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h3><?php _e('Need to start fresh?', $this->plugin_name);?></h3>
+                        <button type="button" class="btn btn-danger">Delete Table</button>
+                    </div>
+                </div>
+
+            </div>
 
 
         <?php endif; ?>

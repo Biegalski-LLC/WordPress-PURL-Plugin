@@ -121,11 +121,13 @@ class Wordpress_Purl_Platform_Public {
                 $wpdb->update(
                     $table,
                     array(
-                        'visited' => '1',	// string
+                        'visited' => '1',
+                        'updated_at' => now()
                     ),
                     array( 'slug' => $purl ),
                     array(
-                        '%d'	// value2
+                        '%d',
+                        '%s'
                     ),
                     array( '%s' )
                 );
