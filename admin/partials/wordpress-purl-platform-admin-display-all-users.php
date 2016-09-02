@@ -23,6 +23,36 @@ do_settings_sections($this->plugin_name);
 
 global $wpdb;
 
+function displayPagination($total_records, $posts_per_page, $page){
+    $total = ceil( $total_records / $posts_per_page );
+
+    $prev_arrow = is_rtl() ? '&rarr;' : '&larr;';
+    $next_arrow = is_rtl() ? '&larr;' : '&rarr;';
+
+    //global $wp_query;
+    $big = 999999999; // need an unlikely integer
+    if( $total > 1 )  {
+        if( get_option('permalink_structure') ) {
+            $format = 'page/%#%/';
+        } else {
+            $format = '&paged=%#%';
+        }
+        $links = paginate_links(array(
+            'base'          => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+            'format'        => $format,
+            'current'       => max( 1, $page ), //get_query_var('paged') <--bug/security fix coming soon
+            'total'         => $total_records,
+            'mid_size'      => 3,
+            'type'          => 'array',
+            'prev_text'     => $prev_arrow,
+            'next_text'     => $next_arrow,
+        ) );
+        return $links;
+    }else{
+        return null;
+    }
+}
+
 ?>
 
 <div class="wrap">
@@ -32,9 +62,9 @@ global $wpdb;
 
         <p><?php _e('Please <a href="'.get_site_url().'/wp-admin/admin.php?page=wordpress-purl-platform">Setup PURL Platform</a> table and import PURL data. Currently you have zero PURL clients.', $this->plugin_name);?></p>
 
-    <?php
+    <?php else: ?>
 
-    else:
+        <?php
         $tableName = $wpdb->prefix . $importCSVId;
 
         $columns = array();
@@ -42,16 +72,20 @@ global $wpdb;
             $columns[] = $column_name;
         }
 
-        $posts_per_page = 1;
+        $posts_per_page = 20;
         $start = 0;
-        $paged = $_GET['paged']; //get_query_var( 'page') ? get_query_var( 'page', 1 ) : 1; <--not working for some odd reason, bug/security fix coming soon
+        if(is_numeric($_GET['paged'])){
+            $paged = $_GET['paged'];
+        }else{
+            $paged = 1;
+        }
         $start = ($paged-1)*$posts_per_page;
 
         $result = $wpdb->get_results("SELECT * from $tableName WHERE `id` IS NOT NULL");
         $total_records = $wpdb->num_rows;
 
         if($total_records === 0):
-        ?>
+            ?>
 
             <h2 class="nav-tab-wrapper"><?php _e('Data Import', $this->plugin_name);?></h2>
 
@@ -93,31 +127,8 @@ global $wpdb;
             </table>
 
             <?php
-            // Display Pagination
-            $total = ceil( $total_records / $posts_per_page); // Calculate Total pages
-
-            $prev_arrow = is_rtl() ? '&rarr;' : '&larr;';
-            $next_arrow = is_rtl() ? '&larr;' : '&rarr;';
-
-            $big = 999999999; // need an unlikely integer
-            if( $total > 1 )  {
-                if( !$current_page = get_query_var('paged') )
-                    $current_page = 1;
-                if( get_option('permalink_structure') ) {
-                    $format = 'page/%#%/';
-                } else {
-                    $format = '&paged=%#%';
-                }
-                $links = paginate_links(array(
-                    'base'          => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
-                    'format'        => $format,
-                    'current'       => max( 1, $_GET['paged'] ), //get_query_var('paged') <--bug/security fix coming soon
-                    'total'         => $total_records,
-                    'mid_size'      => 3,
-                    'type'          => 'array',
-                    'prev_text'     => $prev_arrow,
-                    'next_text'     => $next_arrow,
-                ) );
+            $links = displayPagination($total_records, $posts_per_page, $paged );
+            if(!empty($links) && $links !== null){
                 foreach ($links as $link){
                     echo $link . '&nbsp;';
                 }

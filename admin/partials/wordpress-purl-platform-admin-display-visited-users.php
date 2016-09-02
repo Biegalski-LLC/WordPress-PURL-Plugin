@@ -23,6 +23,36 @@ do_settings_sections($this->plugin_name);
 
 global $wpdb;
 
+function displayPagination($total_records, $posts_per_page, $page){
+    $total = ceil( $total_records / $posts_per_page );
+
+    $prev_arrow = is_rtl() ? '&rarr;' : '&larr;';
+    $next_arrow = is_rtl() ? '&larr;' : '&rarr;';
+
+    //global $wp_query;
+    $big = 999999999; // need an unlikely integer
+    if( $total > 1 )  {
+        if( get_option('permalink_structure') ) {
+            $format = 'page/%#%/';
+        } else {
+            $format = '&paged=%#%';
+        }
+        $links = paginate_links(array(
+            'base'          => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+            'format'        => $format,
+            'current'       => max( 1, $page ), //get_query_var('paged') <--bug/security fix coming soon
+            'total'         => $total_records,
+            'mid_size'      => 3,
+            'type'          => 'array',
+            'prev_text'     => $prev_arrow,
+            'next_text'     => $next_arrow,
+        ) );
+        return $links;
+    }else{
+        return null;
+    }
+}
+
 ?>
 
 <div class="wrap">
@@ -42,8 +72,19 @@ global $wpdb;
             $columns[] = $column_name;
         }
 
-        $result = $wpdb->get_results("SELECT * from $tableName WHERE `id` IS NOT NULL");
-        if(count($result) == 0):
+        $posts_per_page = 1;
+        $start = 0;
+        if(is_numeric($_GET['paged'])){
+            $paged = $_GET['paged'];
+        }else{
+            $paged = 1;
+        }
+        $start = ($paged-1)*$posts_per_page;
+
+        $result = $wpdb->get_results("SELECT * from $tableName WHERE `id` IS NOT NULL AND visited = '1'");
+        $total_records = $wpdb->num_rows;
+
+        if($total_records === 0):
             ?>
 
             <h2 class="nav-tab-wrapper"><?php _e('Data Import', $this->plugin_name);?></h2>
@@ -51,7 +92,7 @@ global $wpdb;
             <p><?php _e('Due to varying hosting environments, typically massive data import sizes, timeouts and failures - for the moment, you will have to manually insert SQL data. <br /><br />To circumvent time/money being wasted - just use our <a href="http://tools.mrcfury.com/csv-to-sql" target="_blank">CSV-To-SQL</a> MRC Tool.<br />Import your data into table: <code>'.$tableName.'</code><br /><br />Import data directly from WordPress coming in future releases.', $this->plugin_name);?></p>
 
         <?php else: ?>
-            <?php $visitedResults = $wpdb->get_results("SELECT * from $tableName WHERE visited = '1'"); ?>
+            <?php $visitedResults = $wpdb->get_results("SELECT * from $tableName WHERE visited = '1' LIMIT $start, $posts_per_page"); ?>
 
             <h2 class="nav-tab-wrapper" style="margin-top:20px;"><?php _e('Active PURL Clients', $this->plugin_name);?></h2>
                 <p><?php _e('The table below represents all users who have visited their Personalized URL [PURL] landing page.', $this->plugin_name);?></p>
@@ -65,25 +106,33 @@ global $wpdb;
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
                         <?php
 
                         if(empty($visitedResults)){
                             echo '<td colspan="10" class="text-center">No Active Users</td>';
                         }else {
                             foreach ($visitedResults as $user) {
+                                echo '<tr>';
                                 $y = 1;
                                 while ($y < 11) {
                                     echo '<td>' . $user->$columns[$y] . '</td>';
                                     $y++;
                                 }
+                                echo '</tr>';
                             }
                         }
                         ?>
-                    </tr>
                     </tbody>
                 </table>
 
+            <?php
+            $links = displayPagination($total_records, $posts_per_page, $paged );
+            if(!empty($links) && $links !== null){
+                foreach ($links as $link){
+                    echo $link . '&nbsp;';
+                }
+            }
+            ?>
         <?php endif; ?>
 
     <?php endif; ?>
