@@ -32,8 +32,6 @@
 
         <?php if($importCSVId === ''): ?>
 
-        <h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
-
         <form method="post" name="purlType" action="options.php">
             <?php
             if ( function_exists('wp_nonce_field') ):

@@ -104,8 +104,8 @@ class Wordpress_Purl_Platform_Public {
 	public function buildShortcodes() {
 
         function purl_shortcode( $atts ) {
-
             global $wpdb;
+
             $wpOptionsTable = $wpdb->prefix . 'options';
             $options = unserialize( $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM $wpOptionsTable WHERE option_name = %s ", 'wordpress-purl-platform' ) ) );
 
@@ -118,19 +118,7 @@ class Wordpress_Purl_Platform_Public {
             $purlData = $wpdb->get_var( $wpdb->prepare( "SELECT $atts[0] FROM $table WHERE slug = %s ", $purl ) );
 
             if(!empty($purlData)){
-                $wpdb->update(
-                    $table,
-                    array(
-                        'visited' => '1',
-                        'updated_at' => date('Y-m-d h:i:s')
-                    ),
-                    array( 'slug' => $purl ),
-                    array(
-                        '%d',
-                        '%s'
-                    ),
-                    array( '%s' )
-                );
+                $wpdb->update( $table, array( 'visited' => '1', 'updated_at' => date('Y-m-d h:i:s') ), array( 'slug' => $purl ), array( '%d', '%s' ), array( '%s' ) );
             }else{
                 $purlData = '';
             }

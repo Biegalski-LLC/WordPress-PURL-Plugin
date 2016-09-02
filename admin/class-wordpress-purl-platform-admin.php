@@ -58,7 +58,7 @@ class Wordpress_Purl_Platform_Admin {
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
-	 * @since    0.0.1
+	 * @since    0.0.4
 	 */
 	public function enqueue_styles() {
 
@@ -74,7 +74,25 @@ class Wordpress_Purl_Platform_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wordpress-purl-platform-admin.css', array(), $this->version, 'all' );
+		switch (get_current_screen() -> id){
+            case 'toplevel_page_wordpress-purl-platform':
+                wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/wordpress-purl-platform-admin.css', array(), $this->version, 'all');
+                break;
+            case 'purl-platform_page_wordpress-purl-platform-all':
+                wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/wordpress-purl-platform-admin.css', array(), $this->version, 'all');
+                break;
+            case 'purl-platform_page_wordpress-purl-platform-active':
+                wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/wordpress-purl-platform-admin.css', array(), $this->version, 'all');
+                break;
+            case 'purl-platform_page_wordpress-purl-platform-inactive':
+                wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/wordpress-purl-platform-admin.css', array(), $this->version, 'all');
+                break;
+            case 'purl-platform_page_wordpress-purl-platform-shortcodes':
+                wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/wordpress-purl-platform-admin.css', array(), $this->version, 'all');
+                break;
+            default:
+                break;
+        }
 
 	}
 
