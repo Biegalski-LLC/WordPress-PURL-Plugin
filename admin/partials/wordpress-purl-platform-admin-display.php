@@ -6,23 +6,23 @@
  * This file is used to markup the admin-facing aspects of the plugin.
  *
  * @link       https://biegalski-llc.com/
- * @since      0.0.3
+ * @since      0.0.4
  *
  * @package    Wordpress_Purl_Platform
  * @subpackage Wordpress_Purl_Platform/admin/partials
  */
 
 
-        //Grab all options
-        $options = get_option($this->plugin_name);
+//Grab all options
+$options = get_option($this->plugin_name);
 
-        // Cleanup
-        $importCSVId = (isset($options['purl-table-name']) && !empty($options['purl-table-name'])) ? $options['purl-table-name'] : '';
+// Cleanup
+$importCSVId = (isset($options['purl-table-name']) && !empty($options['purl-table-name'])) ? $options['purl-table-name'] : '';
 
-        settings_fields($this->plugin_name);
-        do_settings_sections($this->plugin_name);
+settings_fields($this->plugin_name);
+do_settings_sections($this->plugin_name);
 
-        global $wpdb;
+global $wpdb;
 
 
 
@@ -30,7 +30,7 @@
 
 <div class="wrap">
 
-        <?php if($importCSVId === ''): ?>
+    <?php if($importCSVId === ''): ?>
 
         <form method="post" name="purlType" action="options.php">
             <?php
@@ -51,6 +51,7 @@
                     <p><?php _e('The following columns and data types are required and are included in the setup of your PURL campaign schema. You do not need to define them.', $this->plugin_name);?></p>
                     <ul>
                         <li><?php _e('id mediumint(9) NOT NULL AUTO_INCREMENT', $this->plugin_name);?></li>
+                        <li><?php _e('slug varchar(255) NOT NULL', $this->plugin_name);?></li>
                         <li><?php _e('visited mediumint(9)', $this->plugin_name);?></li>
                         <li><?php _e('created_at timestamp', $this->plugin_name);?></li>
                         <li><?php _e('updated_at timestamp', $this->plugin_name);?></li>
@@ -68,7 +69,7 @@
             <fieldset style="margin-top:30px;">
                 <legend><span><?php esc_attr_e('Field 1:', $this->plugin_name);?></span></legend>
                 <label for="<?php echo $this->plugin_name;?>-field_1">
-                    <input type="text" name="<?php echo $this->plugin_name; ?>[field-1]" value="slug"> &nbsp;
+                    <input type="text" name="<?php echo $this->plugin_name; ?>[field-1]" value="referral"> &nbsp;
                     <select name="<?php echo $this->plugin_name; ?>[field-1-type]">
                         <option value="VARCHAR">VARCHAR</option>
                         <option value="BOOLEAN">BOOLEAN</option>
@@ -295,9 +296,9 @@
                 </label>
             </fieldset>
 
-        <?php submit_button(__('Save PURL Config', $this->plugin_name), 'primary','submit', TRUE); ?>
+            <?php submit_button(__('Save PURL Config', $this->plugin_name), 'primary','submit', TRUE); ?>
 
-    </form>
+        </form>
 
     <?php else: ?>
 
@@ -311,11 +312,11 @@
 
         $result = $wpdb->get_results("SELECT * from $tableName WHERE `id` IS NOT NULL");
         if(count($result) == 0):
-        ?>
+            ?>
 
-        <h2 class="nav-tab-wrapper"><?php _e('Data Import', $this->plugin_name);?></h2>
+            <h2 class="nav-tab-wrapper"><?php _e('Data Import', $this->plugin_name);?></h2>
 
-        <p><?php _e('Due to varying hosting environments, typically massive data import sizes, timeouts and failures - for the moment, you will have to manually insert SQL data. <br /><br />To circumvent time/money being wasted - just use our <a href="http://tools.mrcfury.com/csv-to-sql" target="_blank">CSV-To-SQL</a> MRC Tool.<br />Import your data into table: <code>'.$tableName.'</code><br /><br />Import data directly from WordPress coming in future releases.', $this->plugin_name);?></p>
+            <p><?php _e('Due to varying hosting environments, typically massive data import sizes, timeouts and failures - for the moment, you will have to manually insert SQL data. <br /><br />To circumvent time/money being wasted - just use our <a href="http://tools.mrcfury.com/csv-to-sql" target="_blank">CSV-To-SQL</a> MRC Tool.<br />Import your data into table: <code>'.$tableName.'</code><br /><br />Import data directly from WordPress coming in future releases.', $this->plugin_name);?></p>
 
         <?php else: ?>
 

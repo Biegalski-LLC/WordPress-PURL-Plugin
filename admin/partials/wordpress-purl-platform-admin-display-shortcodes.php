@@ -30,7 +30,7 @@ global $wpdb;
     <?php if($importCSVId === ''): ?>
         <h2 class="nav-tab-wrapper" style="margin-top:20px;"><?php _e('PURL Table Configuration', $this->plugin_name);?></h2>
 
-        <p><?php _e('Please <a href="'.get_site_url().'/wp-admin/admin.php?page=wordpress-purl-platform">Setup PURL Platform</a> table and import PURL data. Currently you have zero PURL clients.', $this->plugin_name);?></p>
+        <p><?php _e('Please <a href="'.get_site_url().'/wp-admin/admin.php?page=wordpress-purl-platform">Setup PURL Platform</a> table and import PURL data. Currently you have zero PURL Users.', $this->plugin_name);?></p>
 
     <?php else: ?>
 

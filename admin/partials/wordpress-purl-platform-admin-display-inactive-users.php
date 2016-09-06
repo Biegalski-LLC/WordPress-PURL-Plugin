@@ -5,137 +5,68 @@
  * This file is used to markup the admin-facing aspects of the plugin.
  *
  * @link       https://biegalski-llc.com/
- * @since      0.0.4
+ * @since      0.0.5
  *
  * @package    Wordpress_Purl_Platform
  * @subpackage Wordpress_Purl_Platform/admin/partials
  */
 
-
-//Grab all options
 $options = get_option($this->plugin_name);
 
-// Cleanup
 $importCSVId = (isset($options['purl-table-name']) && !empty($options['purl-table-name'])) ? $options['purl-table-name'] : '';
 
-settings_fields($this->plugin_name);
-do_settings_sections($this->plugin_name);
+settings_fields($this->plugin_name); do_settings_sections($this->plugin_name);
 
 global $wpdb;
-
-function displayPagination($total_records, $posts_per_page, $page){
-    $total = ceil( $total_records / $posts_per_page );
-
-    $prev_arrow = is_rtl() ? '&rarr;' : '&larr;';
-    $next_arrow = is_rtl() ? '&larr;' : '&rarr;';
-
-    //global $wp_query;
-    $big = 999999999; // need an unlikely integer
-    if( $total > 1 )  {
-        if( get_option('permalink_structure') ) {
-            $format = 'page/%#%/';
-        } else {
-            $format = '&paged=%#%';
-        }
-        $links = paginate_links(array(
-            'base'          => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
-            'format'        => $format,
-            'current'       => max( 1, $page ), //get_query_var('paged') <--bug/security fix coming soon
-            'total'         => $total_records,
-            'mid_size'      => 3,
-            'type'          => 'array',
-            'prev_text'     => $prev_arrow,
-            'next_text'     => $next_arrow,
-        ) );
-        return $links;
-    }else{
-        return null;
-    }
-}
-
+include __DIR__.'/PurlController.php';
+$purl = new PurlController;
+if($importCSVId === ''):
 ?>
 
 <div class="wrap">
-
-    <?php if($importCSVId === ''): ?>
         <h2 class="nav-tab-wrapper" style="margin-top:20px;"><?php _e('PURL Table Configuration', $this->plugin_name);?></h2>
 
-        <p><?php _e('Please <a href="'.get_site_url().'/wp-admin/admin.php?page=wordpress-purl-platform">Setup PURL Platform</a> table and import PURL data. Currently you have zero PURL clients.', $this->plugin_name);?></p>
-
-    <?php else: ?>
-
-        <?php
-        $tableName = $wpdb->prefix . $importCSVId;
-
-        $columns = array();
-        foreach ( $wpdb->get_col( "DESC " . $tableName, 0 ) as $column_name ) {
-            $columns[] = $column_name;
-        }
-
-        $posts_per_page = 20;
-        $start = 0;
-        if(is_numeric($_GET['paged'])){
-            $paged = $_GET['paged'];
-        }else{
-            $paged = 1;
-        }
-        $start = ($paged-1)*$posts_per_page;
-
-        $result = $wpdb->get_results("SELECT * from $tableName WHERE `id` IS NOT NULL AND visited = '0'");
-        $total_records = $wpdb->num_rows;
-
-        if($total_records === 0):
-            ?>
-
-            <h2 class="nav-tab-wrapper"><?php _e('Data Import', $this->plugin_name);?></h2>
-
-            <p><?php _e('Due to varying hosting environments, typically massive data import sizes, timeouts and failures - for the moment, you will have to manually insert SQL data. <br /><br />To circumvent time/money being wasted - just use our <a href="http://tools.mrcfury.com/csv-to-sql" target="_blank">CSV-To-SQL</a> MRC Tool.<br />Import your data into table: <code>'.$tableName.'</code><br /><br />Import data directly from WordPress coming in future releases.', $this->plugin_name);?></p>
-
-        <?php else: ?>
-            <?php $nonVisitedResults = $wpdb->get_results("SELECT * from $tableName WHERE visited = '0' LIMIT $start, $posts_per_page"); ?>
-
-            <h2 class="nav-tab-wrapper" style="margin-top:20px;"><?php _e('Inactive PURL Clients', $this->plugin_name);?></h2>
-            <p><?php _e('The table below represents all users who haven\'t visited their Personalized URL [PURL] landing page.', $this->plugin_name);?></p>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <?php $x = 1;
-                    while($x < 11): ?>
-                        <th><?php echo $columns[$x]; ?></th>
-                        <?php $x++; endwhile; ?>
-                </tr>
-                </thead>
-                <tbody>
-
-                    <?php
-
-                    if(empty($nonVisitedResults)){
-                        echo '<td colspan="10" class="text-center">No Users</td>';
-                    }else {
-                        foreach ($nonVisitedResults as $user) {
-                            echo '<tr>';
-                            $y = 1;
-                            while ($y < 11) {
-                                echo '<td>' . $user->$columns[$y] . '</td>';
-                                $y++;
-                            }
-                            echo '</tr>';
-                        }
-                    }
-                    ?>
-                </tbody>
-            </table>
-
-            <?php
-            $links = displayPagination($total_records, $posts_per_page, $paged );
-            if(!empty($links) && $links !== null){
-                foreach ($links as $link){
-                    echo $link . '&nbsp;';
-                }
-            }
-            ?>
-        <?php endif; ?>
-
-    <?php endif; ?>
+        <p><?php _e('Please <a href="'.get_site_url().'/wp-admin/admin.php?page=wordpress-purl-platform">Setup PURL Platform</a> table and import PURL data. Currently you have zero PURL Users.', $this->plugin_name);?></p>
 
 </div>
+
+<?php else:
+    $tableName = $wpdb->prefix . $importCSVId;
+
+    $columns = array();
+    foreach ( $wpdb->get_col( 'DESC ' . $tableName, 0 ) as $column_name ) {
+        $columns[] = $column_name;
+    }
+
+    $posts_per_page = 20;
+    $start = $purl->paginationStartPage($posts_per_page, $_GET['paged']);
+
+    $result = $wpdb->get_results("SELECT * from $tableName WHERE `id` IS NOT NULL");
+    $total_records = $wpdb->num_rows;
+
+    if($total_records === 0):
+        $purl->dataImportText();
+    else:
+        $nonVisitedResults = $wpdb->get_results("SELECT * from $tableName WHERE visited = '0' LIMIT $start, $posts_per_page");
+        $total_records = $wpdb->num_rows;
+?>
+<div class="wrap">
+    <h2 class="nav-tab-wrapper" style="margin-top:20px;"><?php _e('Inactive PURL Users', $this->plugin_name);?></h2>
+    <p><?php _e('The table below represents all users who haven\'t visited their Personalized URL [PURL] landing page.', $this->plugin_name);?></p>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <?php echo $purl->outputColumnNames($columns); ?>
+        </tr>
+        </thead>
+        <tbody>
+            <?php echo $purl->outputPurlUsers($nonVisitedResults, 'Inactive'); ?>
+        </tbody>
+    </table>
+    <?php echo $purl->displayPagination($total_records, $posts_per_page, $_GET['paged'] ); ?>
+<?php endif; ?>
+</div>
+
+<?php endif; ?>
+
+
